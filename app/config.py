@@ -39,6 +39,13 @@ def _read_ids(name: str) -> set[int]:
     return ids
 
 
+def _read_bool(name: str, default: bool) -> bool:
+    value = os.getenv(name)
+    if value is None or value == "":
+        return default
+    return value.lower() not in {"0", "false", "no", "off"}
+
+
 @dataclass(frozen=True)
 class Settings:
     environment: str
@@ -56,6 +63,10 @@ class Settings:
     telegram_admin_ids: set[int]
     direct_reward_rub: int
     second_level_reward_rub: int
+    debug_login_enabled: bool
+    debug_agent_email: str
+    debug_agent_name: str
+    debug_agent_password: str
 
 
 def load_settings() -> Settings:
@@ -101,6 +112,22 @@ def load_settings() -> Settings:
         second_level_reward_rub=_read_int(
             "PRAVBURO_AGENTS_SECOND_LEVEL_REWARD_RUB",
             5000,
+        ),
+        debug_login_enabled=_read_bool(
+            "PRAVBURO_AGENTS_DEBUG_LOGIN_ENABLED",
+            False,
+        ),
+        debug_agent_email=os.getenv(
+            "PRAVBURO_AGENTS_DEBUG_AGENT_EMAIL",
+            "test-agent@example.ru",
+        ),
+        debug_agent_name=os.getenv(
+            "PRAVBURO_AGENTS_DEBUG_AGENT_NAME",
+            "Тестовый агент",
+        ),
+        debug_agent_password=os.getenv(
+            "PRAVBURO_AGENTS_DEBUG_AGENT_PASSWORD",
+            "test12345",
         ),
     )
 

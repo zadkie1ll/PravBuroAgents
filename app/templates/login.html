@@ -29,11 +29,22 @@
 
     <button class="button button-primary submit" type="submit">ВОЙТИ</button>
 
+    {% if debug_login_enabled %}
+      <div class="debug-login">
+        <span>Временный вход для отладки</span>
+        <button class="button button-muted" type="submit" form="debug-login-form">ВОЙТИ В ТЕСТОВЫЙ АККАУНТ</button>
+        <small>{{ debug_agent_email }}</small>
+      </div>
+    {% endif %}
+
     <div class="auth-links">
       <span>Еще нет доступа?</span>
       <a href="/register">Зарегистрироваться</a>
     </div>
   </form>
+  {% if debug_login_enabled %}
+    <form id="debug-login-form" method="post" action="/debug-login"></form>
+  {% endif %}
 </main>
 {% endblock %}
 

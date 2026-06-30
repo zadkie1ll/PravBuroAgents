@@ -22,6 +22,7 @@ from app.repository import (
     dashboard_data,
     email_is_valid,
     get_agent,
+    get_or_create_debug_agent,
     get_pending_registration,
     initialize_storage,
     leaderboard,
@@ -93,7 +94,15 @@ def index(request: Request):
 def login_page(request: Request):
     if current_agent(request):
         return RedirectResponse("/cabinet", status_code=303)
-    return templates.TemplateResponse("login.html", {"request": request, "error": None})
+    return templates.TemplateResponse(
+        "login.html",
+        {
+            "request": request,
+            "error": None,
+            "debug_login_enabled": settings.debug_login_enabled,
+            "debug_agent_email": settings.debug_agent_email,
+        },
+    )
 
 
 @app.post("/login")
@@ -104,9 +113,23 @@ def login(request: Request, email: str = Form(""), password: str = Form("")):
     if not agent:
         return templates.TemplateResponse(
             "login.html",
-            {"request": request, "error": "Неверная почта или пароль"},
+            {
+                "request": request,
+                "error": "Неверная почта или пароль",
+                "debug_login_enabled": settings.debug_login_enabled,
+                "debug_agent_email": settings.debug_agent_email,
+            },
             status_code=400,
         )
+    request.session["agent_id"] = agent.id
+    return RedirectResponse("/cabinet", status_code=303)
+
+
+@app.post("/debug-login")
+def debug_login(request: Request):
+    if not settings.debug_login_enabled:
+        return RedirectResponse("/login", status_code=303)
+    agent = get_or_create_debug_agent()
     request.session["agent_id"] = agent.id
     return RedirectResponse("/cabinet", status_code=303)
 

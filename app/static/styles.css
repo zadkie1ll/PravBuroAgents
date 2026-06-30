@@ -137,6 +137,18 @@ h2 { font-size: 20px; }
   margin-top: 18px;
   color: var(--muted);
 }
+.debug-login {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px dashed #b7c2cf;
+  border-radius: 8px;
+  background: #f7fafc;
+  color: var(--muted);
+}
+.debug-login .button { width: 100%; }
+.debug-login small { overflow-wrap: anywhere; }
 
 .topbar {
   height: 64px;

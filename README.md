@@ -11,7 +11,9 @@ docker compose up --build
 
 Приложение откроется на `http://localhost:8020`.
 
-Если SMTP не настроен, код регистрации выводится в логи приложения. Для Telegram-модерации укажите `PRAVBURO_AGENTS_TELEGRAM_BOT_TOKEN` и `PRAVBURO_AGENTS_TELEGRAM_ADMIN_IDS`.
+По умолчанию приложение поднимается с PostgreSQL из `docker-compose.yml`. Если SMTP не настроен, код регистрации выводится в логи приложения. Для Telegram-модерации укажите `PRAVBURO_AGENTS_TELEGRAM_BOT_TOKEN` и `PRAVBURO_AGENTS_TELEGRAM_ADMIN_IDS`.
+
+Для отладки можно включить кнопку моментального входа через `PRAVBURO_AGENTS_DEBUG_LOGIN_ENABLED=1`. Она создаёт тестового агента из `PRAVBURO_AGENTS_DEBUG_AGENT_*` и сразу открывает кабинет.
 
 Суммы выплат задаются через `.env`:
 

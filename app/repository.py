@@ -225,6 +225,23 @@ def authenticate_agent(email: str, password: str) -> Agent | None:
         return None
 
 
+def get_or_create_debug_agent() -> Agent:
+    email = normalize_email(settings.debug_agent_email)
+    with session_scope() as session:
+        agent = session.scalar(select(Agent).where(Agent.email == email))
+        if agent:
+            return agent
+        agent = Agent(
+            email=email,
+            name=settings.debug_agent_name.strip() or "Тестовый агент",
+            password_hash=hash_password(settings.debug_agent_password),
+            referral_code=unique_referral_code(session),
+        )
+        session.add(agent)
+        session.commit()
+        return agent
+
+
 def get_agent(agent_id: int | None) -> Agent | None:
     if agent_id is None:
         return None

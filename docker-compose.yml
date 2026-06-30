@@ -6,10 +6,26 @@ services:
     restart: unless-stopped
     env_file:
       - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
     ports:
       - "${PRAVBURO_AGENTS_PORT:-8020}:8000"
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-pravburo_agents}
+      POSTGRES_USER: ${POSTGRES_USER:-pravburo_agents}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pravburo_agents_password}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-pravburo_agents} -d ${POSTGRES_DB:-pravburo_agents}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
     volumes:
-      - pravburo_agents_data:/app/data
+      - pravburo_agents_postgres:/var/lib/postgresql/data
 
 volumes:
-  pravburo_agents_data:
+  pravburo_agents_postgres:
