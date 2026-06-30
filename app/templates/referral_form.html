@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% set title = "Оставить заявку | PravBuro" %}
+{% set body_class = "auth-page" %}
+
+{% block content %}
+<main class="auth-shell compact">
+  <section class="auth-visual">
+    <div class="brand-mark">ПБ</div>
+    <div class="visual-lines"></div>
+  </section>
+  <form class="auth-card" method="post" action="/r/{{ code }}">
+    <p class="eyebrow">PravBuro</p>
+    <h1>Оставить заявку</h1>
+    {% if target %}
+      <p class="lead">Укажи имя и телефон. После проверки специалист свяжется с тобой.</p>
+      {% if error %}<div class="alert">{{ error }}</div>{% endif %}
+      <label class="field">
+        <span>Имя</span>
+        <input type="text" name="name" autocomplete="name" placeholder="Иван" required>
+      </label>
+      <label class="field">
+        <span>Телефон</span>
+        <input type="tel" name="phone" autocomplete="tel" placeholder="+7 999 000-00-00" required>
+      </label>
+      <button class="button button-primary submit" type="submit">ОСТАВИТЬ ЗАЯВКУ</button>
+    {% else %}
+      <div class="alert">{{ error or "Ссылка не найдена или больше не активна" }}</div>
+    {% endif %}
+  </form>
+</main>
+{% endblock %}

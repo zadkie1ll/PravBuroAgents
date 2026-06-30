@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% set title = "PravBuro Agents" %}
+{% set body_class = "auth-page" %}
+
+{% block content %}
+<main class="auth-shell">
+  <section class="auth-visual">
+    <div class="brand-mark">ПБ</div>
+    <div class="visual-lines"></div>
+  </section>
+  <section class="auth-card">
+    <p class="eyebrow">Партнерская программа</p>
+    <h1>PravBuro Agents</h1>
+    <p class="lead">Личный кабинет агента для реферальных заявок, модерации через Telegram и передачи проверенных лидов в Bitrix24.</p>
+    <div class="auth-actions">
+      <a class="button button-primary" href="/register">Создать доступ</a>
+      <a class="button button-muted" href="/login">Войти</a>
+    </div>
+  </section>
+</main>
+{% endblock %}

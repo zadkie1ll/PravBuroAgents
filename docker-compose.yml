@@ -1,0 +1,15 @@
+services:
+  pravburo-agents:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "${PRAVBURO_AGENTS_PORT:-8020}:8000"
+    volumes:
+      - pravburo_agents_data:/app/data
+
+volumes:
+  pravburo_agents_data:

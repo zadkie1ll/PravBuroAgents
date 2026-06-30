@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% set title = "Вход | PravBuro Agents" %}
+{% set body_class = "auth-page" %}
+
+{% block content %}
+<main class="auth-shell">
+  <section class="auth-visual">
+    <div class="brand-mark">ПБ</div>
+    <div class="visual-lines"></div>
+  </section>
+  <form class="auth-card" method="post" action="/login">
+    <p class="eyebrow">Личный кабинет</p>
+    <h1>Войти</h1>
+    <p class="lead">Используй почту и пароль, чтобы открыть ссылку, QR-код и статус своих рекомендаций.</p>
+
+    {% if error %}
+      <div class="alert">{{ error }}</div>
+    {% endif %}
+
+    <label class="field">
+      <span>Почта</span>
+      <input type="email" name="email" autocomplete="email" placeholder="mail@example.ru" required data-email-input>
+    </label>
+
+    <label class="field">
+      <span>Пароль</span>
+      <input type="password" name="password" autocomplete="current-password" placeholder="Минимум 6 символов" required>
+    </label>
+
+    <button class="button button-primary submit" type="submit">ВОЙТИ</button>
+
+    <div class="auth-links">
+      <span>Еще нет доступа?</span>
+      <a href="/register">Зарегистрироваться</a>
+    </div>
+  </form>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    var input = document.querySelector("[data-email-input]");
+    if (!input) return;
+    input.addEventListener("input", function () {
+      input.value = input.value.replace(/\s+/g, "").toLowerCase();
+      input.setCustomValidity("");
+    });
+  })();
+</script>
+{% endblock %}

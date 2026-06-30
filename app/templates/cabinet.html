@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% set title = "Кабинет | PravBuro Agents" %}
+{% set body_class = "cabinet-page" %}
+
+{% block content %}
+<header class="topbar">
+  <div>
+    <span class="mini-logo">ПБ</span>
+    <strong>PravBuro Agents</strong>
+  </div>
+  <a href="/logout">Выйти</a>
+</header>
+
+<main class="cabinet">
+  <section class="hero-band">
+    <div>
+      <p class="eyebrow">Привет, {{ agent.name }}</p>
+      <h1>Твоя реферальная ссылка</h1>
+      <div class="copy-row">
+        <input value="{{ referral_url }}" readonly data-copy-value>
+        <button class="icon-button" type="button" title="Скопировать" data-copy-button>⧉</button>
+      </div>
+      <p class="hint">Прямая выплата: {{ "{:,}".format(direct_reward).replace(",", " ") }} руб. Повторная рекомендация клиента: {{ "{:,}".format(second_reward).replace(",", " ") }} руб.</p>
+    </div>
+    <img class="qr" src="{{ qr_code }}" alt="QR-код реферальной ссылки">
+  </section>
+
+  <section class="stats-grid">
+    <div class="stat">
+      <span>Заработано</span>
+      <strong>{{ "{:,}".format(total_earned).replace(",", " ") }} ₽</strong>
+    </div>
+    <div class="stat">
+      <span>Всего заявок</span>
+      <strong>{{ leads|length }}</strong>
+    </div>
+    <div class="stat">
+      <span>В работе</span>
+      <strong>{{ leads|selectattr("status", "equalto", "work_started")|list|length }}</strong>
+    </div>
+  </section>
+
+  <section class="content-grid">
+    <div class="panel wide">
+      <h2>Мои рекомендации</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Клиент</th>
+              <th>Телефон</th>
+              <th>Статус</th>
+              <th>Уровень</th>
+              <th>Ссылка клиента</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for lead in leads %}
+            <tr>
+              <td>{{ lead.name }}</td>
+              <td>{{ lead.phone }}</td>
+              <td><span class="status status-{{ lead.status }}">{{ lead.status }}</span></td>
+              <td>{{ "2" if lead.parent_lead_id else "1" }}</td>
+              <td>
+                {% if lead.status in ["approved", "work_started"] %}
+                  <a href="{{ public_base_url }}/r/{{ lead.referral_code }}">{{ lead.referral_code }}</a>
+                {% else %}
+                  —
+                {% endif %}
+              </td>
+            </tr>
+          {% else %}
+            <tr><td colspan="5">Заявок пока нет.</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Топ 10</h2>
+      <ol class="leaderboard">
+        {% for name, count, amount in leaderboard %}
+          <li><span>{{ name }}</span><strong>{{ "{:,}".format(amount).replace(",", " ") }} ₽</strong></li>
+        {% else %}
+          <li><span>Пока пусто</span><strong>0 ₽</strong></li>
+        {% endfor %}
+      </ol>
+    </div>
+  </section>
+
+  <section class="info-band">
+    <article>
+      <h2>Кого приводить</h2>
+      <p>Целевой клиент уже понимает, что ему нужна юридическая помощь, готов обсудить ситуацию и оставить контакт для первичного звонка.</p>
+    </article>
+    <article>
+      <h2>Как работает фильтр</h2>
+      <p>Заявка сначала попадает в Telegram-бота. После ручной проверки она отправляется в Bitrix24, чтобы CRM не забивалась мусором.</p>
+    </article>
+    <article>
+      <h2>Повторные рекомендации</h2>
+      <p>После одобрения клиент получает собственную ссылку. Если по ней придет новый клиент и начнет работу, тебе начислится дополнительная выплата.</p>
+    </article>
+  </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    var button = document.querySelector("[data-copy-button]");
+    var input = document.querySelector("[data-copy-value]");
+    if (!button || !input) return;
+    button.addEventListener("click", function () {
+      navigator.clipboard.writeText(input.value);
+      button.textContent = "✓";
+      setTimeout(function () { button.textContent = "⧉"; }, 1200);
+    });
+  })();
+</script>
+{% endblock %}

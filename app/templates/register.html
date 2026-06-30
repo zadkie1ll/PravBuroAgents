@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% set title = "Регистрация | PravBuro Agents" %}
+{% set body_class = "auth-page" %}
+
+{% block content %}
+<main class="auth-shell">
+  <section class="auth-visual">
+    <div class="brand-mark">ПБ</div>
+    <div class="visual-lines"></div>
+  </section>
+
+  {% if pending_registration %}
+  <form class="auth-card" method="post" action="/register/confirm">
+    <p class="eyebrow">Подтверждение почты</p>
+    <h1>Код</h1>
+    <p class="lead">Мы отправили код на {{ pending_registration.email }}. Введи его, чтобы создать доступ.</p>
+
+    {% if error %}
+      <div class="alert">{{ error }}</div>
+    {% endif %}
+
+    <label class="field">
+      <span>Код из письма</span>
+      <input type="text" name="code" inputmode="numeric" autocomplete="one-time-code" placeholder="000000" maxlength="6" pattern="[0-9]{6}" data-auto-submit-code required>
+    </label>
+
+    <button class="button button-primary submit" type="submit">ПОДТВЕРДИТЬ</button>
+
+    <div class="auth-links">
+      <span>Письмо не пришло?</span>
+      <a href="/register?reset=1">Заполнить заново</a>
+    </div>
+  </form>
+  {% else %}
+  <form class="auth-card" method="post" action="/register">
+    <p class="eyebrow">Доступ агента</p>
+    <h1>Регистрация</h1>
+    <p class="lead">Укажи имя, почту и пароль. После кода подтверждения откроется личный кабинет.</p>
+
+    {% if error %}
+      <div class="alert">{{ error }}</div>
+    {% endif %}
+
+    <label class="field">
+      <span>Имя</span>
+      <input type="text" name="name" autocomplete="name" placeholder="Иван" value="{{ name or '' }}" required>
+    </label>
+
+    <label class="field">
+      <span>Почта</span>
+      <input type="email" name="email" autocomplete="email" placeholder="mail@example.ru" value="{{ email }}" required data-email-input>
+    </label>
+
+    <label class="field">
+      <span>Пароль</span>
+      <input type="password" name="password" autocomplete="new-password" placeholder="Минимум 6 символов" minlength="6" required>
+    </label>
+
+    <label class="field">
+      <span>Повтори пароль</span>
+      <input type="password" name="password_repeat" autocomplete="new-password" placeholder="Еще раз пароль" minlength="6" required>
+    </label>
+
+    <button class="button button-primary submit" type="submit">СОЗДАТЬ ДОСТУП</button>
+
+    <div class="auth-links">
+      <span>Уже есть аккаунт?</span>
+      <a href="/login">Войти</a>
+    </div>
+  </form>
+  {% endif %}
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    var emailInput = document.querySelector("[data-email-input]");
+    var codeInput = document.querySelector("[data-auto-submit-code]");
+    if (emailInput) {
+      emailInput.addEventListener("input", function () {
+        emailInput.value = emailInput.value.replace(/\s+/g, "").toLowerCase();
+        emailInput.setCustomValidity("");
+      });
+    }
+    if (codeInput) {
+      var submitting = false;
+      codeInput.addEventListener("input", function () {
+        codeInput.value = codeInput.value.replace(/\D/g, "").slice(0, 6);
+        if (codeInput.value.length === 6 && !submitting && codeInput.form.checkValidity()) {
+          submitting = true;
+          codeInput.form.requestSubmit();
+        }
+      });
+    }
+  })();
+</script>
+{% endblock %}
